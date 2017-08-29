@@ -4,19 +4,22 @@ import { NavLink } from 'react-router-dom';
 
 function CampusList (props) {
   return (
-    <ul>
-      {
-        props.campuses.map(campus => {
-          return (
-            <li key = {campus.id}>
-              <NavLink to={`/campuses/${campus.id}`}>
-                {campus.name}
-              </NavLink>
-            </li>
-          )
-        })
-      }
-    </ul>
+    <div>
+      <ul>
+        {
+          props.campuses.map(campus => {
+            return (
+              <li key = {campus.id}>
+                <NavLink to={`/campuses/${campus.id}`}>
+                  {campus.name}
+                </NavLink>
+              </li>
+            )
+          })
+        }
+      </ul>
+      <NavLink to="/new-campus">Create a campus</NavLink>
+    </div>
   )
 }
 
