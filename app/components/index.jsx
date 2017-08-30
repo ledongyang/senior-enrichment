@@ -8,6 +8,7 @@ import StudentList from './StudentList';
 import AllStudentList from './AllStudentsList';
 import SingleStudent from './SingleStudent';
 import NewCampusEntry from './NewCampusEntry';
+import NewStudentEntry from './NewStudentEntry';
 import Navbar from './Navbar';
 
 export default class Main extends Component {
@@ -30,6 +31,7 @@ export default class Main extends Component {
             <Route exact path="/campuses/:id" component={ StudentList } />
             <Route exact path="/students/:id" component={ SingleStudent } />
             <Route exact path="/new-campus" component={ NewCampusEntry } />
+            <Route exact path="/campuses/:id/new-student" component={ NewStudentEntry } />
             <Redirect to="/campuses" />
           </Switch>
         </main>

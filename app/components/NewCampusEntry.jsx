@@ -24,7 +24,8 @@ const mapState = (state) => {
   }
 }
 
-const mapDispatch = (dispatch) => {
+const mapDispatch = (dispatch, ownProps) => {
+
   return {
     handleNameChange: (e) => {
       dispatch(writeCampusName(e.target.value))
@@ -39,7 +40,7 @@ const mapDispatch = (dispatch) => {
         campusImage = 'http://www.guiageo-americas.com/mapas/mapa/americas-nasa.jpg';
       }
       e.preventDefault();
-      dispatch(postCampus({name: campusName, image: campusImage}))
+      dispatch(postCampus({name: campusName, image: campusImage}, ownProps.history))
     }
   }
 }
