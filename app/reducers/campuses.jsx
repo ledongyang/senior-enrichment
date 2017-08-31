@@ -1,18 +1,25 @@
 import axios from 'axios';
+import { removeStudents } from './students';
 
+//constants
 const GET_CAMPUSES = 'GET_CAMPUSES';
 const WRITE_CAMPUS_NAME = 'WRITE_CAMPUS_NAME';
 const WRITE_CAMPUS_IMAGE = 'WRITE_CAMPUS_IMAGE';
 const GET_CAMPUS = 'GET_CAMPUS';
+const REMOVE_CAMPUS = 'REMOVE_CAMPUS';
+const SEARCH_CAMPUS = 'SEARCH_CAMPUS';
 
+//initial state
 const initialState = {
   campuses: [],
+  matchCampuses: [],
   newCampus: {
     name: '',
     image: ''
   }
 }
 
+//action creators
 export function getCampuses (campuses) {
   const action = { type: GET_CAMPUSES, campuses };
   return action;
@@ -33,6 +40,17 @@ export function getCampus (campus) {
   return action;
 }
 
+export function removeCampus (campusId) {
+  const action = { type: REMOVE_CAMPUS, campusId };
+  return action;
+}
+
+export function searchCampus (campusName) {
+  const action = { type: SEARCH_CAMPUS, campusName };
+  return action;
+}
+
+//thunk creators
 export function fetchCampuses () {
   return function thunk (dispatch) {
     return axios.get('/api/campuses')
@@ -55,6 +73,17 @@ export function postCampus (campus, history) {
   }
 }
 
+export function deleteCampus (campusId) {
+  return function thunk (dispatch) {
+    return axios.delete(`/api/campuses/${campusId}`)
+    .then(() => {
+      dispatch(removeCampus(campusId));
+      dispatch(removeStudents(campusId));
+    })
+  }
+}
+
+//campus reducer
 export default function campusReducer (state = initialState, action) {
   switch (action.type) {
     case GET_CAMPUSES:
@@ -70,7 +99,12 @@ export default function campusReducer (state = initialState, action) {
         image: action.campusImage
       }});
     case GET_CAMPUS:
-      return Object.assign({}, state, {campuses: [...state.campuses, action.campus]})
+      return Object.assign({}, state, {campuses: [...state.campuses, action.campus], matchCampuses: []})
+    case REMOVE_CAMPUS:
+      return Object.assign({}, state, {campuses: state.campuses.filter(campus => +campus.id !== +action.campusId)})
+    case SEARCH_CAMPUS:
+      return Object.assign({}, state, {matchCampuses: state.campuses.filter(campus => campus.name.match(action.campusName) && action.campusName.length > 0
+      )})
     default:
       return state;
   }

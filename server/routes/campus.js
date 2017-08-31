@@ -33,12 +33,30 @@ router.put('/:id', (req, res, next) => {
 });
 
 router.delete('/:id', (req, res, next) => {
-	db.models.campus.destroy({
+	// db.models.campus.destroy({
+	// 	where: {
+	// 		id: req.params.id
+	// 	}
+	// })
+	// .then(() => {
+	// 	res.status(204).end()
+	// })
+	// .catch(next);
+	db.models.student.destroy({
 		where: {
-			id: req.params.id
+			campusId: req.params.id
 		}
 	})
-	.then(() => res.status(204).end())
+	.then(() => {
+		return db.models.campus.destroy({
+			where: {
+				id: req.params.id
+			}
+		})
+		.then(() => {
+			res.status(204).end();
+		})
+	})
 	.catch(next);
 });
 

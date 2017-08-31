@@ -8,7 +8,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/:id', (req, res, next) => {
-	db.models.student.findById(req.params.id)
+	db.models.student.findById(req.params.id, {include: [{all: true, nested: true}]})
 	.then(student => {
 		res.json(student)
 	})
@@ -26,7 +26,7 @@ router.put('/:id', (req, res, next) => {
 		where: {id: req.params.id}
 	})
 	.then(() => {
-		return db.models.student.findById(req.params.id)
+		return db.models.student.findById(req.params.id, {include: [{all: true, nested: true}]})
 	})
 	.then(updatedStudent => res.json(updatedStudent))
 	.catch(next);
