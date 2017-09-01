@@ -16,7 +16,7 @@ function CampusList (props) {
       </div>
       <div className="container">
         <div className="form-group">
-          <input className="form-control" onChange={props.handleChange} name="search-bar" type="text" placeholder="Search a campus"/>
+          <input className="form-control" onChange={props.handleChange} name="search-bar" type="text" placeholder="Search a campus" />
         </div>
         <div className="form-group">
           <NavLink to="/new-campus"><button className="btn btn-primary">Create a campus</button></NavLink>

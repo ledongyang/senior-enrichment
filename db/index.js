@@ -18,10 +18,48 @@ const db = module.exports = new Sequelize(connectionString, {
 // run our models file (makes all associations for our Sequelize objects)
 require('./models')
 
+// seeds
+const campuses = [
+  { name: 'Titan', image: 'https://www.nasa.gov/sites/default/files/pia17470_0.jpg' },
+  { name: 'Terra', image: 'http://www.guiageo-americas.com/mapas/mapa/americas-nasa.jpg' }
+];
+
+const students = [{
+  name: 'Cody',
+  email: 'cody@cody.com',
+  campusId: 1
+}, {
+  name: 'Ben',
+  email: 'ben@ben.com',
+  campusId: 1
+}, {
+  name: 'Star',
+  email: 'star@star.com',
+  campusId: 2
+}, {
+  name: 'Batman',
+  email: 'batman@bat.com',
+  campusId: 2
+}]
+
+const seed = () =>
+  Promise.all(campuses.map(campus =>
+    db.models.campus.create(campus))
+  )
+  .then(() =>
+  Promise.all(students.map(student =>
+    db.models.student.create(student))
+  ));
+
+
 // sync the db, creating it if necessary
 function sync(force=false, retries=0, maxRetries=5) {
-  return db.sync({force})
+  return db.sync({force: true})
   .then(ok => console.log(`Synced models to db ${connectionString}`))
+  .then(() => {
+      console.log('Seeding databse');
+      return seed();
+  })
   .catch(fail => {
     // Don't do this auto-create nonsense in prod, or
     // if we've retried too many times.

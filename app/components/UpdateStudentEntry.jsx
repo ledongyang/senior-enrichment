@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { writeStudentName, writeStudentEmail, updateStudent } from '../reducers/students';
+import { updateStudent, validateEmail, validateName } from '../reducers/students';
 
 function UpdateStudentEntry (props) {
   const studentId = props.match.params.id;
@@ -10,7 +10,6 @@ function UpdateStudentEntry (props) {
       <div>404 Not Found Student to Update!</div>
     )
   } else {
-    // props.getStudentInfo(selectedStudent);
     return (
       <div>
         <form onSubmit={props.handleSubmit}>
@@ -41,27 +40,33 @@ function UpdateStudentEntry (props) {
 const mapState = (state) => {
   return {
     students: state.studentReducer.students,
-    newStudent: state.studentReducer.newStudent
+    newStudent: state.studentReducer.newStudent,
+    invalidName: state.studentReducer.invalidName,
+    invalidEmail: state.studentReducer.invalidEmail
   }
 }
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
-    // handleNameChange: (e) => {
-    //   dispatch(writeStudentName(e.target.value));
-    // },
-    // handleEmailChange: (e) => {
-    //   dispatch(writeStudentEmail(e.target.value));
-    // },
     handleSubmit: (e) => {
       const campusId = e.target.campusId.value;
       const name = e.target.studentName.value;
       const email = e.target.studentEmail.value;
       const updatedStudent = { name, email, campusId };
       e.preventDefault();
+      console.log(name.length)
+      if (!name.length) {
+        dispatch(validateName(true));
+        return;
+      }
+      if (!email.length) {
+        dispatch(validateEmail(true));
+        dispatch(validateName(false));
+        return;
+      }
+      dispatch(validateName(false));
+      dispatch(validateEmail(false));
       dispatch(updateStudent(updatedStudent, ownProps.match.params.id, ownProps.history));
-      // dispatch(writeStudentName(''));
-      // dispatch(writeStudentEmail(''));
     }
   }
 }

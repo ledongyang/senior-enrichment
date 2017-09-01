@@ -4,18 +4,10 @@ import { NavLink } from 'react-router-dom';
 import { deleteStudent, searchStudent } from '../reducers/students'
 
 function StudentList (props) {
-  // let students, campuses = [];
-  // students = props.matchStudents.length > 0 ?  props.matchStudents : props.students;
-  // if (props.match.params.id) {
-  //   students = students.filter(student => +student.campusId === +props.match.params.id);
-  //   campuses = props.campuses.filter(campus => +campus.id === +props.match.params.id);
-  // }
-  // console.log('props: ', props)
   let students = props.matchStudents.length > 0 ?  props.matchStudents : props.students;
   let campusId = props.match.params.id;
   if (campusId) {
     students = students.filter(student => +student.campusId === +campusId);
-    // campuses = props.campuses.filter(campus => +campus.id === +props.match.params.id);
   }
   return (
     <div className="container">
