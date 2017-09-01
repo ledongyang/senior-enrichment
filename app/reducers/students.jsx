@@ -9,6 +9,8 @@ const REMOVE_STUDENT = 'REMOVE_STUDENT';
 const REMOVE_STUDENTS = 'REMOVE_STUDENTS';
 const SWITCH_STUDENT = 'SWITCH_STUDENT';
 const SEARCH_STUDENT = 'SEARCH_STUDENT';
+const VALIDATE_EMAIL = 'VALIDATE_EMAIL';
+const VALIDATE_NAME = 'VALIDATE_NAME';
 
 //initial state
 const initialState = {
@@ -17,7 +19,9 @@ const initialState = {
   newStudent: {
     name: '',
     email: ''
-  }
+  },
+  invalidEmail: false,
+  invalidName: false
 }
 
 //action creators
@@ -61,6 +65,16 @@ export function searchStudent (studentName) {
   return action;
 }
 
+export function validateEmail (bool) {
+  const action = { type: VALIDATE_EMAIL, bool };
+  return action;
+}
+
+export function validateName (bool) {
+  const action = { type: VALIDATE_NAME, bool };
+  return action;
+}
+
 //thunk creators
 export function fetchStudents () {
   return function thunk (dispatch) {
@@ -70,6 +84,7 @@ export function fetchStudents () {
       const action = getStudents(students);
       dispatch(action);
     })
+    .catch(console.error)
   }
 }
 
@@ -86,6 +101,7 @@ export function postStudent (newStudent, history) {
       dispatch(action);
       history.push(`/students/${foundStudent.id}`)
     })
+    .catch(console.error)
   }
 }
 
@@ -96,18 +112,20 @@ export function deleteStudent (studentId) {
       const action = removeStudent(studentId);
       dispatch(action);
     })
-
+    .catch(console.error)
   }
 }
 
-export function updateStudent (updatedStudent, studentId) {
+export function updateStudent (updatedStudent, studentId, history) {
   return function thunk (dispatch) {
     return axios.put(`/api/students/${studentId}`, updatedStudent)
     .then(res => res.data)
     .then(student => {
       const action = switchStudent(student);
       dispatch(action);
+      history.push(`/students/${studentId}`);
     })
+    .catch(console.error)
   }
 }
 
@@ -141,7 +159,11 @@ export default function studentReducer (state = initialState, action) {
         }
       })})
     case SEARCH_STUDENT:
-      return Object.assign({}, state, {matchStudents: state.students.filter(student => student.name.match(action.studentName) && action.studentName.length > 0)})
+      return Object.assign({}, state, {matchStudents: state.students.filter(student => student.name.toLowerCase().match(action.studentName.toLowerCase()) && action.studentName.length > 0)})
+    case VALIDATE_EMAIL:
+      return Object.assign({}, state, {invalidEmail: action.bool});
+    case VALIDATE_NAME:
+      return Object.assign({}, state, {invalidName: action.bool})
     default:
       return state;
   }

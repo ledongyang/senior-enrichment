@@ -4,36 +4,65 @@ import { NavLink } from 'react-router-dom';
 import { deleteStudent, searchStudent } from '../reducers/students'
 
 function StudentList (props) {
-  let students, campuses = [];
-  students = props.matchStudents.length > 0 ?  props.matchStudents : props.students;
-  if (props.match.params.id) {
-    students = students.filter(student => +student.campusId === +props.match.params.id);
-    campuses = props.campuses.filter(campus => +campus.id === +props.match.params.id);
+  // let students, campuses = [];
+  // students = props.matchStudents.length > 0 ?  props.matchStudents : props.students;
+  // if (props.match.params.id) {
+  //   students = students.filter(student => +student.campusId === +props.match.params.id);
+  //   campuses = props.campuses.filter(campus => +campus.id === +props.match.params.id);
+  // }
+  // console.log('props: ', props)
+  let students = props.matchStudents.length > 0 ?  props.matchStudents : props.students;
+  let campusId = props.match.params.id;
+  if (campusId) {
+    students = students.filter(student => +student.campusId === +campusId);
+    // campuses = props.campuses.filter(campus => +campus.id === +props.match.params.id);
   }
   return (
-    <div>
-      { campuses[0] && <h1>{campuses[0].name} Campus</h1>}
-      <label htmlFor="search-bar">search a student:</label>
-      <input onChange={props.handleChange} name="search-bar" type="text" />
-      <ul>
+    <div className="container">
+      <div className="form-group">
+        <input className="form-control" onChange={props.handleChange} name="search-bar" type="text" placeholder="Search a student" />
+      </div>
+      {
+        campusId ? <div className="form-group">
+            <NavLink to={`/campuses/${campusId}/new-student`}><button className="btn btn-primary">Add a student</button></NavLink>
+          </div> : <div className="form-group">
+            <NavLink to={`/new-student`}><button className="btn btn-primary">Add a student</button></NavLink>
+          </div>
+      }
+      <table className="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            {
+              !campusId && <th>Campus</th>
+            }
+            <th>Email</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
         {
           students.map(student => {
             return (
-              <li key={student.id}>
-                <NavLink to={`/students/${student.id}`}>{student.name}</NavLink>
+              <tr key={student.id}>
+                <td>
+                  <NavLink to={`/students/${student.id}`}>{student.name}</NavLink>
+                </td>
                 {
-                  !campuses[0] && <div> campus: <NavLink to={`/campuses/${student.campus.id}`}>{student.campus.name}</NavLink>
-                  </div>
+                  !campusId && <td>
+                    <NavLink to={`/campuses/${student.campus.id}`}>{student.campus.name}</NavLink>
+                  </td>
                 }
-                ----<button value={student.id} onClick={props.removeStudent}>x</button>
-              </li>
+                <td>{student.email}</td>
+                <td>
+                  <button className="btn btn-danger" value={student.id} onClick={props.removeStudent}>X</button>
+                </td>
+              </tr>
             )
           })
         }
-      </ul>
-      {
-        props.match.params.id ? <NavLink to={`/campuses/${props.match.params.id}/new-student`}>Add a student</NavLink> : <NavLink to={`/new-student`}>Add a student</NavLink>
-      }
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -41,7 +70,7 @@ function StudentList (props) {
 const mapStateToProps = (state) => {
   return {
     students: state.studentReducer.students,
-    campuses: state.campusReducer.campuses,
+    // campuses: state.campusReducer.campuses,
     matchStudents: state.studentReducer.matchStudents
   }
 }

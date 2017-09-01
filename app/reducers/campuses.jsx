@@ -8,9 +8,11 @@ const WRITE_CAMPUS_IMAGE = 'WRITE_CAMPUS_IMAGE';
 const GET_CAMPUS = 'GET_CAMPUS';
 const REMOVE_CAMPUS = 'REMOVE_CAMPUS';
 const SEARCH_CAMPUS = 'SEARCH_CAMPUS';
+const VALIDATE_FORM = 'VALIDATE_FORM';
 
 //initial state
 const initialState = {
+  invalidForm: false,
   campuses: [],
   matchCampuses: [],
   newCampus: {
@@ -50,6 +52,11 @@ export function searchCampus (campusName) {
   return action;
 }
 
+export function validateForm (bool) {
+  const action = { type: VALIDATE_FORM, bool };
+  return action;
+}
+
 //thunk creators
 export function fetchCampuses () {
   return function thunk (dispatch) {
@@ -59,6 +66,7 @@ export function fetchCampuses () {
       const action = getCampuses(campuses);
       dispatch(action);
     })
+    .catch(console.error)
   }
 }
 
@@ -70,6 +78,7 @@ export function postCampus (campus, history) {
       dispatch(getCampus(newCampus));
       history.push(`/campuses/${newCampus.id}`);
     })
+    .catch(console.error)
   }
 }
 
@@ -80,6 +89,7 @@ export function deleteCampus (campusId) {
       dispatch(removeCampus(campusId));
       dispatch(removeStudents(campusId));
     })
+    .catch(console.error)
   }
 }
 
@@ -103,8 +113,10 @@ export default function campusReducer (state = initialState, action) {
     case REMOVE_CAMPUS:
       return Object.assign({}, state, {campuses: state.campuses.filter(campus => +campus.id !== +action.campusId)})
     case SEARCH_CAMPUS:
-      return Object.assign({}, state, {matchCampuses: state.campuses.filter(campus => campus.name.match(action.campusName) && action.campusName.length > 0
+      return Object.assign({}, state, {matchCampuses: state.campuses.filter(campus => campus.name.toLowerCase().match(action.campusName.toLowerCase()) && action.campusName.length > 0
       )})
+    case VALIDATE_FORM:
+      return Object.assign({}, state, {invalidForm: action.bool});
     default:
       return state;
   }

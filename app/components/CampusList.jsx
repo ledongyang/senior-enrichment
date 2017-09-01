@@ -5,25 +5,44 @@ import { deleteCampus, searchCampus } from '../reducers/campuses';
 
 function CampusList (props) {
   const campuses = props.matchCampuses.length > 0 ? props.matchCampuses : props.campuses;
+  const divStyle = {
+    backgroundImage: `url('/image/galaxy.jpg')`
+  }
   return (
     <div>
-      <label htmlFor="search-bar">search a campus:</label>
-      <input onChange={props.handleChange} name="search-bar" type="text" />
-      <ul>
+      <div className="jumbotron" style={divStyle}>
+        <h1>Welcome to Galaxy Academy</h1>
+        <p>The Best Bootcamp in The Universe</p>
+      </div>
+      <div className="container">
+        <div className="form-group">
+          <input className="form-control" onChange={props.handleChange} name="search-bar" type="text" placeholder="Search a campus"/>
+        </div>
+        <div className="form-group">
+          <NavLink to="/new-campus"><button className="btn btn-primary">Create a campus</button></NavLink>
+        </div>
+        <div className="row">
         {
           campuses.map(campus => {
             return (
-              <li key = {campus.id}>
-                <NavLink to={`/campuses/${campus.id}`}>
-                  {campus.name}
-                </NavLink>----
-                <button value={campus.id} onClick={props.removeCampus}>x</button>
-              </li>
+              <div key = {campus.id} className="col-xs-6 col-md-4">
+                <div className="thumbnail">
+                  <NavLink to={`/campuses/${campus.id}`}>
+                    <img src={campus.image} alt="campus-image" />
+                  </NavLink>
+                  <div className="caption">
+                    <NavLink to={`/campuses/${campus.id}`}>
+                      <h1>{campus.name}</h1>
+                    </NavLink>
+                    <button className="btn btn-danger" value={campus.id} onClick={props.removeCampus}>Delete</button>
+                  </div>
+                </div>
+              </div>
             )
           })
         }
-      </ul>
-      <NavLink to="/new-campus">Create a campus</NavLink>
+        </div>
+      </div>
     </div>
   )
 }

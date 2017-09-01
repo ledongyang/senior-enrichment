@@ -1,0 +1,48 @@
+.navbar {
+  margin-bottom: 0;
+}
+
+#bg {
+  margin: 0;
+  height: calc(100vh - 50px);
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+}
+
+#bg-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 50vh;
+  color: #fff;
+  text-shadow: 2px 2px #252525;
+  z-index: 1;
+}
+
+.bg-image {
+  position: absolute;
+  display: block;
+  min-width: 100%;
+  height: 100%;
+}
+
+.container {
+  margin-top: 20px;
+}
+
+.jumbotron {
+  background-color: #17234E;
+  color: #fffff7;
+  margin-bottom: 20px;
+  min-height: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  -webkit-background-size: cover;
+  background-size: cover;
+}
+
+.jumbotron h1,p{
+  margin-left:20px;
+}
+

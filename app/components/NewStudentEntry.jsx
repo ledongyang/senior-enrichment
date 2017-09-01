@@ -1,43 +1,55 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { writeStudentName, writeStudentEmail, postStudent } from '../reducers/students';
+import { writeStudentName, writeStudentEmail, postStudent, validateEmail, validateName } from '../reducers/students';
 
 function NewStudentEntry (props) {
-  console.log(props)
+  // console.log(props)
   return (
-    <form onSubmit={props.handleSubmit}>
-      <div className="form-group">
-        <label htmlFor="name">Add a Student</label>
-        <input  onChange={props.handleNameChange} value={props.newStudent.name} className="form-control" type="text" name="studentName" placeholder="Enter student name" />
-        <input  onChange={props.handleEmailChange} value={props.newStudent.email} className="form-control" type="text" name="studentEmail" placeholder="Enter student email" />
+    <div className="container">
+      <form onSubmit={props.handleSubmit}>
         {
-          !props.match.params.id &&
-          <div>
-            <label htmlFor="campusSelection">select a campus:</label>
-            <select name="campusSelection">
-              {
-                props.campuses.map(campus => {
-                  return (
-                    <option value={campus.id} key={campus.id}>{campus.name}</option>
-                  )
-                })
-              }
-            </select>
-          </div>
+          props.invalidName ? <div name="name-warning" className="alert alert-warning" role="alert">Please Enter a Student Name!</div> : <div></div>
         }
-
-      </div>
-      <div className="form-group">
-        <button type="submit" className="btn btn-default">Add Student</button>
-      </div>
-    </form>
+        <div className="form-group">
+          <label htmlFor="studentName">Student Name</label>
+          <input  onChange={props.handleNameChange} value={props.newStudent.name} className="form-control" type="text" name="studentName" placeholder="Enter student name" />
+        </div>
+        {
+          props.invalidEmail ? <div name="email-warning" className="alert alert-warning" role="alert">Please Enter a Email!</div> : <div></div>
+        }
+        <div className="form-group">
+          <label htmlFor="studentEmail">Student Email</label>
+          <input  onChange={props.handleEmailChange} value={props.newStudent.email} className="form-control" type="text" name="studentEmail" placeholder="Enter student email" />
+        </div>
+          {
+            !props.match.params.id &&
+            <div className="form-group">
+              <label htmlFor="campusSelection">Select a campus:</label>
+              <select className="form-control" name="campusSelection">
+                {
+                  props.campuses.map(campus => {
+                    return (
+                      <option value={campus.id} key={campus.id}>{campus.name}</option>
+                    )
+                  })
+                }
+              </select>
+            </div>
+          }
+        <div className="form-group">
+          <button type="submit" className="btn btn-primary">Add Student</button>
+        </div>
+      </form>
+    </div>
   )
 }
 
 const mapState = (state) => {
   return {
     newStudent: state.studentReducer.newStudent,
-    campuses: state.campusReducer.campuses
+    campuses: state.campusReducer.campuses,
+    invalidName: state.studentReducer.invalidName,
+    invalidEmail: state.studentReducer.invalidEmail
   }
 }
 
@@ -56,7 +68,20 @@ const mapDispatch = (dispatch, ownProps) => {
       const email = e.target.studentEmail.value;
       const campusId = ownProps.match.params.id || e.target.campusSelection.value;
       e.preventDefault();
-      dispatch(postStudent({name, email, campusId}, ownProps.history))
+      if (!name.length) {
+        dispatch(validateName(true));
+        return;
+      }
+      if (!email.length) {
+        dispatch(validateEmail(true));
+        dispatch(validateName(false));
+        return;
+      }
+      dispatch(validateName(false));
+      dispatch(validateEmail(false));
+      dispatch(postStudent({name, email, campusId}, ownProps.history));
+      dispatch(writeStudentName(''));
+      dispatch(writeStudentEmail(''));
     }
   }
 }

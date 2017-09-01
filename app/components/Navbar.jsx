@@ -14,7 +14,7 @@ export default function Navbar () {
               <span className="icon-bar"></span>
               <span className="icon-bar"></span>
             </button>
-            <NavLink to="/campuses" className="navbar-brand">Galaxy Academy</NavLink>
+            <NavLink to="/" className="navbar-brand">Galaxy Academy</NavLink>
           </div>
           <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul className="nav navbar-nav">
